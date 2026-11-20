@@ -98,16 +98,27 @@ public class Main {
         System.out.println("Room removed.");
     }
      // ---------- Tenants ----------
-    private static void checkIn() {
-        if (manager.getRooms().isEmpty()) { System.out.println("Add a room first."); return; }
-        String name = readText("Tenant name: ");
-        String contact = readText("Contact number: ");
-        listRooms();
-        String roomNo = readText("Assign to room number: ");
-        double deposit = readDouble("Deposit paid: ");
-        Tenant t = manager.checkIn(name, contact, roomNo, deposit);
-        System.out.println("Tenant added with ID " + t.getId() + ".");
+  private static void checkIn() {
+    if (manager.getRooms().isEmpty()) { System.out.println("Add a room first."); return; }
+    String name = readText("Tenant name: ");
+    String contact = readText("Contact number: ");
+    listRooms();
+    String roomNo = readText("Assign to room number: ");
+    double deposit = readDouble("Deposit paid: ");
+    Tenant t = manager.checkIn(name, contact, roomNo, deposit);
+    System.out.println("Tenant added with ID " + t.getId() + ".");
+
+    // Choose: pay now or later
+    String ans = readText("Record first month's payment now? (y/n): ");
+    if (ans.equalsIgnoreCase("y")) {
+        YearMonth month = readMonth("Month being paid (YYYY-MM, blank = this month): ");
+        double amount = readDouble("Amount paid: ");
+        double balance = manager.recordPayment(t.getId(), month, amount);
+        System.out.printf("Payment recorded. Balance for %s: %.2f%n", month, balance);
+    } else {
+        System.out.println("No payment recorded. Use option 7 to record it later.");
     }
+}
       private static void listTenants() {
         List<Tenant> tenants = manager.getTenants();
         if (tenants.isEmpty()) { System.out.println("No tenants yet."); return; }
