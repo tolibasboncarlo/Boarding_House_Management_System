@@ -58,7 +58,7 @@ public class Main {
         System.out.println("\n===Room Management===");
         System.out.println("1. Add Room");
         System.out.println("2. List Room");
-        System.out.println("3. Update Room");
+        System.out.println("3. Remove Room");
 
         System.out.println("\n===Check-in Management===");
         System.out.println("4. Add Tenant");
@@ -118,8 +118,8 @@ public class Main {
         }
     }
        private static void checkOut() {
-        Tenant t = manager.checkOut(readInt("Tenant ID to check out: "));
-        System.out.println(t.getName() + " has been checked out. Payment history is kept.");
+        Tenant t = manager.checkOut(readInt("Tenant ID to remove: "));
+        System.out.println(t.getName() + " has been removed. Payment history is kept.");
     }
 
      // ---------- Billing ----------
