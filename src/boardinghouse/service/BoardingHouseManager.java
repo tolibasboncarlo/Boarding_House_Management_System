@@ -35,7 +35,7 @@ public class BoardingHouseManager {
     }
 
     private void save() {
-        storage.saveAll(rooms, tenants, billings);
+        // storage.saveAll(rooms, tenants, billings);
     }
 
     public List<Room> getRooms() {
