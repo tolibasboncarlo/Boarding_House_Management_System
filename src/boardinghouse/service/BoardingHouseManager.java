@@ -19,12 +19,14 @@ public class BoardingHouseManager {
     private final FileStorage storage;
     private final List<Room> rooms;
     private final List<Tenant> tenants;
+    private final List<Tenant> tenantHistory;
     private final List<Billing> billings;
 
     public BoardingHouseManager(FileStorage storage) {
         this.storage = storage;
         this.rooms = storage.loadRooms();
         this.tenants = storage.loadTenants();
+        this.tenantHistory = storage.loadTenantHistory();
         this.billings = storage.loadBillings();
         // link each loaded tenant to their room
         for (Tenant t : tenants) {
@@ -35,7 +37,7 @@ public class BoardingHouseManager {
     }
 
     private void save() {
-        // storage.saveAll(rooms, tenants, billings);
+        storage.saveAll(rooms, tenants, tenantHistory, billings);
     }
 
     public List<Room> getRooms() {
@@ -74,6 +76,12 @@ public class BoardingHouseManager {
         return Collections.unmodifiableList(tenants);
     }
 
+    public List<Tenant> getTenantHistory() {
+        List<Tenant> result = new ArrayList<>(tenantHistory);
+        result.addAll(tenants);
+        return Collections.unmodifiableList(result);
+    }
+
     public Tenant findTenant(int id) {
         for (Tenant t : tenants)
             if (t.getId() == id)
@@ -84,6 +92,8 @@ public class BoardingHouseManager {
     private int nextTenantId() {
         int max = 0;
         for (Tenant t : tenants)
+            max = Math.max(max, t.getId());
+        for (Tenant t : tenantHistory)
             max = Math.max(max, t.getId());
         return max + 1;
     }
@@ -123,9 +133,12 @@ public class BoardingHouseManager {
         Room r = findRoom(t.getRoomNo());
         if (r != null)
             r.removeOccupant(t);
+        Tenant checkedOut = new Tenant(t.getId(), t.getName(), t.getContact(), t.getRoomNo(),
+                t.getMoveIn(), t.getDeposit(), LocalDate.now());
+        tenantHistory.add(checkedOut);
         tenants.remove(t);
         save();
-        return t;
+        return checkedOut;
     }
 
     public double getBalance(Tenant t, YearMonth month) {

@@ -32,19 +32,28 @@ public class FileStorage {
         return list;
     }
 
+    public List<Tenant> loadTenantHistory() {
+        List<Tenant> list = new ArrayList<>();
+        for (String l : readLines("tenant_history.csv")) list.add(Tenant.fromHistoryCsv(l));
+        return list;
+    }
+
     public List<Billing> loadBillings() {
         List<Billing> list = new ArrayList<>();
         for (String l : readLines("billings.csv")) list.add(Billing.fromCsv(l));
         return list;
     }
 
-    public void saveAll(List<Room> rooms, List<Tenant> tenants, List<Billing> billings) {
+    public void saveAll(List<Room> rooms, List<Tenant> tenants, List<Tenant> tenantHistory,
+            List<Billing> billings) {
         try {
             Files.createDirectories(dir);
             Files.write(dir.resolve("rooms.csv"),
                     rooms.stream().map(Room::toCsv).collect(Collectors.toList()));
             Files.write(dir.resolve("tenants.csv"),
                     tenants.stream().map(Tenant::toCsv).collect(Collectors.toList()));
+            Files.write(dir.resolve("tenant_history.csv"),
+                    tenantHistory.stream().map(Tenant::toHistoryCsv).collect(Collectors.toList()));
             Files.write(dir.resolve("billings.csv"),
                     billings.stream().map(Billing::toCsv).collect(Collectors.toList()));
         } catch (IOException e) {
